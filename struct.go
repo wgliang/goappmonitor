@@ -38,3 +38,13 @@ type RuntimeMetrics struct {
 	NumGoroutine metrics.Gauge
 	ReadMemStats metrics.Histogram
 }
+
+type DebugMetrics struct {
+	GCStats struct {
+		LastGC     metrics.Gauge
+		NumGC      metrics.Gauge
+		Pause      metrics.Histogram
+		PauseTotal metrics.Gauge
+	}
+	ReadGCStats metrics.Histogram
+}

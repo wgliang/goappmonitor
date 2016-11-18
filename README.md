@@ -1,6 +1,6 @@
 ![Logcool](./logo.png)
 
-# appMonitor
+# AppMonitor
 Golang application performance data monitoring.
 
 
