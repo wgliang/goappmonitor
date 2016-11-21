@@ -12,20 +12,20 @@ var (
 	gcStats      = debug.GCStats{Pause: make([]time.Duration, 11)}
 )
 
-func CollectorAndCaptureDebugGCStats(r metrics.Registry, d time.Duration) {
-	CollectorDebugGCStats(r)
+func CollectDebugGCStats(r metrics.Collectry, d time.Duration) {
+	collectDebugGCStats(r)
 	go captureDebugGCStats(r, d)
 }
 
 // capture debug stats
-func captureDebugGCStats(r metrics.Registry, d time.Duration) {
+func captureDebugGCStats(r metrics.Collectry, d time.Duration) {
 	for _ = range time.Tick(d) {
 		captureDebugGCStatsOnce(r)
 	}
 }
 
 // Debug stats
-func captureDebugGCStatsOnce(r metrics.Registry) {
+func captureDebugGCStatsOnce(r metrics.Collectry) {
 	lastGC := gcStats.LastGC
 	t := time.Now()
 	debug.ReadGCStats(&gcStats)
@@ -41,7 +41,7 @@ func captureDebugGCStatsOnce(r metrics.Registry) {
 }
 
 // Collect debug stats
-func CollectorDebugGCStats(r metrics.Registry) {
+func collectDebugGCStats(r metrics.Collectry) {
 	debugMetrics.GCStats.LastGC = metrics.NewGauge()
 	debugMetrics.GCStats.NumGC = metrics.NewGauge()
 	debugMetrics.GCStats.Pause = metrics.NewHistogram(metrics.NewExpDecaySample(1028, 0.015))

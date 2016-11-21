@@ -17,8 +17,9 @@ var (
 	numCgoCalls    int64
 )
 
-func CollectorAndCaptureRuntimeMemStats(r metrics.Collectry, d time.Duration) {
-	collectorRuntimeMemStats(r)
+// 采集运行状态下的内存状态信息
+func CollectRuntimeMemStats(r metrics.Collectry, d time.Duration) {
+	collectRuntimeMemStats(r)
 	go captureRuntimeMemStats(r, d)
 }
 
@@ -29,7 +30,7 @@ func captureRuntimeMemStats(r metrics.Collectry, d time.Duration) {
 	}
 }
 
-// 操作单元
+// 采集运行时内存信息单元
 func captureRuntimeMemStatsOnce(r metrics.Collectry) {
 	t := time.Now()
 	runtime.ReadMemStats(&memStats)
@@ -102,7 +103,7 @@ func captureRuntimeMemStatsOnce(r metrics.Collectry) {
 }
 
 // 收集运行内存状态信息
-func collectorRuntimeMemStats(r metrics.Collectry) {
+func collectRuntimeMemStats(r metrics.Collectry) {
 	runtimeMetrics.MemStats.Alloc = metrics.NewGauge()
 	runtimeMetrics.MemStats.BuckHashSys = metrics.NewGauge()
 	runtimeMetrics.MemStats.DebugGC = metrics.NewGauge()

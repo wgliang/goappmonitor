@@ -1,6 +1,8 @@
 package appmonitor
 
 import (
+	"fmt"
+	"os"
 	"runtime"
 	"testing"
 	"time"
@@ -10,7 +12,7 @@ import (
 
 func BenchmarkRuntimeMemStats(b *testing.B) {
 	r := metrics.NewCollectry()
-	collectorRuntimeMemStats(r)
+	collectRuntimeMemStats(r)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		captureRuntimeMemStatsOnce(r)
@@ -19,7 +21,7 @@ func BenchmarkRuntimeMemStats(b *testing.B) {
 
 func TestRuntimeMemStats(t *testing.T) {
 	r := metrics.NewCollectry()
-	collectorRuntimeMemStats(r)
+	collectRuntimeMemStats(r)
 	captureRuntimeMemStatsOnce(r)
 	zero := runtimeMetrics.MemStats.PauseNs.Count() // Get a "zero" since GC may have run before these tests.
 	runtime.GC()
@@ -68,11 +70,15 @@ func TestRuntimeMemStatsBlocking(t *testing.T) {
 }
 
 func testRuntimeMemStatsBlocking(ch chan int) {
+	ti := time.After(3 * time.Second)
 	i := 0
 	for {
 		select {
 		case ch <- i:
 			return
+		case t := <-ti:
+			fmt.Println(t)
+			os.Exit(0)
 		default:
 			i++
 		}
