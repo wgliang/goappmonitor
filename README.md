@@ -13,11 +13,19 @@
 Golang application performance data monitoring.
 
 
-goappmonitor is a library which provides a monitor on your golang applications. It contains system level based monitoring and business level monitoring(custom monitoring).Just add the repository into your apps and registe what you want to monitoring.
+GoAppMonitor is a library which provides a monitor on your golang applications. It contains system level based monitoring and business level monitoring(custom monitoring).Just add the repository into your apps and registe what you want to monitoring.
 
-## Recent Changes
+## Summary
 
-support system-base level monitoring.
+Using GoAppMonitor to monitor the golang applications, in general as following:
+
+In your golang application code, the user calls the statistics function provided by goappmonitor; when the statistics function is called, the perfcounter generates a statistical record, and is stored in memory.GoAppMonitor will automatically and regularly record these statistics push to the collector such as Open-Falcon collector(agent or transfer).
+
+## Version
+
+version support collector:
+
+v0.0.1 - [Open-Falcon](https://github.com/XiaoMi/open-falcon) (Open source monitoring system of Xiaomi)
 
 ## Install
 
@@ -26,7 +34,7 @@ support system-base level monitoring.
 ## Usage
 
 Below is an example which shows some common use cases for goappmonitor.  Check 
-[example.go](https://github.com/wgliang/goappmonitor/blob/master/example) for more
+[example](https://github.com/wgliang/goappmonitor/blob/master/example) for more
 usage.
 
 
