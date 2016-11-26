@@ -14,58 +14,52 @@ const (
 	GAUGE = "GAUGE"
 )
 
+// init
 func init() {
-	// 读取配置文件
 	cfg = config()
-	// 数据采集频率
 	step = cfg.Step
-	// 推送地址
 	api = cfg.Push.Api
-	// 采集数据状态，调试还是生产环境
 	gdebug = cfg.Debug
-	// 主机名
 	endpoint = cfg.Hostname
-	// 标签
 	gtags = cfg.Tags
 }
 
-// 推送到open－falcon的agent上
+// Push data to open－falcon agent.
 func push2Falcon() {
 
-	// 准备下然后开始工作
+	// prepare to start work
 	alignPushStartTs(step)
-	// 定一个闹钟
+	// add a timer
 	ti := time.Tick(time.Duration(step) * time.Second)
 	for {
 		select {
 		case <-ti:
-			// 采集事件计数
+			// collection event count
 			selfMeter("pfc.push.cnt", 1) // statistics
-			// 当前采集的所有数据指标
+			// current collection of all data indicators
 			fms := falconMetrics()
-			// 获取当前时间
+			// get local time
 			start := time.Now()
-			// 推送出去
-			fmt.Println(fms)
+			// push data
 			err := push(fms, api, gdebug)
-			// 推送耗时
+			// push time
 			selfGauge("pfc.push.ms", int64(time.Since(start)/time.Millisecond)) // statistics
 
 			if err != nil {
 				if gdebug {
 					log.Printf("[perfcounter] send to %s error: %v", api, err)
 				}
-				// 失败情况下，推送数据大小为0
+				// failure case, push data size of 0
 				selfGauge("pfc.push.size", int64(0)) // statistics
 			} else {
-				// 推送数据大小
+				// push data size
 				selfGauge("pfc.push.size", int64(len(fms))) // statistics
 			}
 		}
 	}
 }
 
-// open-falcon类型metric
+// Open-falcon metric.
 func falconMetric(types []string) (fd []*MetricValue) {
 	for _, ty := range types {
 		if r, ok := values[ty]; ok && r != nil {
@@ -76,7 +70,7 @@ func falconMetric(types []string) (fd []*MetricValue) {
 	return fd
 }
 
-// open-falcon类型metrics
+// Open-falcon metrics.
 func falconMetrics() []*MetricValue {
 	data := make([]*MetricValue, 0)
 	for _, r := range values {
@@ -86,7 +80,7 @@ func falconMetrics() []*MetricValue {
 	return data
 }
 
-// open-falcon 转换internal
+// Open-falcon internal.
 func _falconMetric(r metrics.Collectry) []*MetricValue {
 	ts := time.Now().Unix()
 	data := make([]*MetricValue, 0)
@@ -115,28 +109,28 @@ func _falconMetric(r metrics.Collectry) []*MetricValue {
 	return data
 }
 
-// gauge类型数据转换
+// Gauge data-transfer.
 func gaugeMetricValue(metric metrics.Gauge, metricName, endpoint, oldtags string, step, ts int64) []*MetricValue {
 	tags := getTags(metricName, oldtags)
 	c := newMetricValue(endpoint, "value", metric.Value(), step, GAUGE, tags, ts)
 	return []*MetricValue{c}
 }
 
-// gauge64类型数据转换
+// Gauge64 data-transfer.
 func gaugeFloat64MetricValue(metric metrics.GaugeFloat64, metricName, endpoint, oldtags string, step, ts int64) []*MetricValue {
 	tags := getTags(metricName, oldtags)
 	c := newMetricValue(endpoint, "value", metric.Value(), step, GAUGE, tags, ts)
 	return []*MetricValue{c}
 }
 
-// counter类型数据转换
+// Counter data-transfer.
 func counterMetricValue(metric metrics.Counter, metricName, endpoint, oldtags string, step, ts int64) []*MetricValue {
 	tags := getTags(metricName, oldtags)
 	c1 := newMetricValue(endpoint, "count", metric.Count(), step, GAUGE, tags, ts)
 	return []*MetricValue{c1}
 }
 
-// meter类型数据转换
+// Meter data-transfer.
 func meterMetricValue(metric metrics.Meter, metricName, endpoint, oldtags string, step, ts int64) []*MetricValue {
 	data := make([]*MetricValue, 0)
 	tags := getTags(metricName, oldtags)
@@ -148,7 +142,7 @@ func meterMetricValue(metric metrics.Meter, metricName, endpoint, oldtags string
 	return data
 }
 
-// histogram数据类型转换
+// Histogram data-transfer.
 func histogramMetricValue(metric metrics.Histogram, metricName, endpoint, oldtags string, step, ts int64) []*MetricValue {
 	data := make([]*MetricValue, 0)
 	tags := getTags(metricName, oldtags)
@@ -169,7 +163,7 @@ func histogramMetricValue(metric metrics.Histogram, metricName, endpoint, oldtag
 	return data
 }
 
-// 创建出metric类型数据
+// New a metric data.
 func newMetricValue(endpoint, metric string, value interface{}, step int64, t, tags string, ts int64) *MetricValue {
 	return &MetricValue{
 		Endpoint:  endpoint,
@@ -182,7 +176,7 @@ func newMetricValue(endpoint, metric string, value interface{}, step int64, t, t
 	}
 }
 
-// 获取标签
+// Get tags.
 func getTags(name string, tags string) string {
 	if tags == "" {
 		return fmt.Sprintf("name=%s", name)
@@ -190,7 +184,7 @@ func getTags(name string, tags string) string {
 	return fmt.Sprintf("%s,name=%s", tags, name)
 }
 
-// 推送到代理地址
+// Push address agent.
 func push(data []*MetricValue, url string, debug bool) error {
 	dlen := len(data)
 	pkg := 200 //send pkg items once
@@ -224,7 +218,7 @@ func push(data []*MetricValue, url string, debug bool) error {
 	return nil
 }
 
-// 凑整
+// Rounding.
 func alignPushStartTs(stepSec int64) {
 	nw := time.Duration(time.Now().UnixNano())
 	step := time.Duration(stepSec) * time.Second
@@ -234,7 +228,7 @@ func alignPushStartTs(stepSec int64) {
 	}
 }
 
-// 采集数据
+// Data struct.
 type MetricValue struct {
 	Endpoint  string      `json:"endpoint"`
 	Metric    string      `json:"metric"`
@@ -245,7 +239,7 @@ type MetricValue struct {
 	Timestamp int64       `json:"timestamp"`
 }
 
-// 转化成格式化字符串
+// Transfer to string.
 func (this *MetricValue) String() string {
 	return fmt.Sprintf(
 		"<Endpoint:%s, Metric:%s, Tags:%s, Type:%s, Step:%d, Timestamp:%d, Value:%v>",

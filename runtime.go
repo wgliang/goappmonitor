@@ -17,21 +17,21 @@ var (
 	numCgoCalls    int64
 )
 
-// 采集运行状态下的内存状态信息
+// Collect runtime memeory-data.
 func CollectRuntimeMemStats(r metrics.Collectry, d time.Duration) {
 	collectRuntimeMemStats(r)
 	go captureRuntimeMemStats(r, d)
 }
 
-// 抓取运行内存状态信息
+// Capture runtime memeory-data.
 func captureRuntimeMemStats(r metrics.Collectry, d time.Duration) {
 	for _ = range time.Tick(d) {
-		captureRuntimeMemStatsOnce(r)
+		captureRuntimeMemStatsWorker(r)
 	}
 }
 
-// 采集运行时内存信息单元
-func captureRuntimeMemStatsOnce(r metrics.Collectry) {
+// Capture runtime memeory-data worker.
+func captureRuntimeMemStatsWorker(r metrics.Collectry) {
 	t := time.Now()
 	runtime.ReadMemStats(&memStats)
 	runtimeMetrics.ReadMemStats.Update(int64(time.Since(t)))
@@ -102,7 +102,7 @@ func captureRuntimeMemStatsOnce(r metrics.Collectry) {
 	runtimeMetrics.NumGoroutine.Update(int64(runtime.NumGoroutine()))
 }
 
-// 收集运行内存状态信息
+// Collect runtime memory stats.
 func collectRuntimeMemStats(r metrics.Collectry) {
 	runtimeMetrics.MemStats.Alloc = metrics.NewGauge()
 	runtimeMetrics.MemStats.BuckHashSys = metrics.NewGauge()
@@ -167,10 +167,12 @@ func collectRuntimeMemStats(r metrics.Collectry) {
 	r.Collector("runtime.ReadMemStats", runtimeMetrics.ReadMemStats)
 }
 
+// Cgo call
 func numCgoCall() int64 {
 	return 0
 }
 
+// gcCPUFraction call
 func gcCPUFraction(memStats *runtime.MemStats) float64 {
 	return memStats.GCCPUFraction
 }

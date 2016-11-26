@@ -12,7 +12,7 @@ func BenchmarkDebugGCStats(b *testing.B) {
 	collectDebugGCStats(r)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		captureDebugGCStatsOnce(r)
+		captureDebugGCStatsWorker(r)
 	}
 }
 

@@ -4,7 +4,7 @@ import (
 	"github.com/wgliang/metrics"
 )
 
-// 运行生产环境下监控的应用指标
+// Monitoring index of application in production environment.
 type RuntimeMetrics struct {
 	MemStats struct {
 		Alloc         metrics.Gauge
@@ -40,7 +40,7 @@ type RuntimeMetrics struct {
 	ReadMemStats metrics.Histogram
 }
 
-// 调试模式下的应用指标
+// Monitoring index of application in debug environment.
 type DebugMetrics struct {
 	GCStats struct {
 		LastGC     metrics.Gauge

@@ -15,37 +15,37 @@ func BenchmarkRuntimeMemStats(b *testing.B) {
 	collectRuntimeMemStats(r)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		captureRuntimeMemStatsOnce(r)
+		captureRuntimeMemStatsWorker(r)
 	}
 }
 
 func TestRuntimeMemStats(t *testing.T) {
 	r := metrics.NewCollectry()
 	collectRuntimeMemStats(r)
-	captureRuntimeMemStatsOnce(r)
+	captureRuntimeMemStatsWorker(r)
 	zero := runtimeMetrics.MemStats.PauseNs.Count() // Get a "zero" since GC may have run before these tests.
 	runtime.GC()
-	captureRuntimeMemStatsOnce(r)
+	captureRuntimeMemStatsWorker(r)
 	if count := runtimeMetrics.MemStats.PauseNs.Count(); 1 != count-zero {
 		t.Fatal(count - zero)
 	}
 	runtime.GC()
 	runtime.GC()
-	captureRuntimeMemStatsOnce(r)
+	captureRuntimeMemStatsWorker(r)
 	if count := runtimeMetrics.MemStats.PauseNs.Count(); 3 != count-zero {
 		t.Fatal(count - zero)
 	}
 	for i := 0; i < 256; i++ {
 		runtime.GC()
 	}
-	captureRuntimeMemStatsOnce(r)
+	captureRuntimeMemStatsWorker(r)
 	if count := runtimeMetrics.MemStats.PauseNs.Count(); 259 != count-zero {
 		t.Fatal(count - zero)
 	}
 	for i := 0; i < 257; i++ {
 		runtime.GC()
 	}
-	captureRuntimeMemStatsOnce(r)
+	captureRuntimeMemStatsWorker(r)
 	if count := runtimeMetrics.MemStats.PauseNs.Count(); 515 != count-zero { // We lost one because there were too many GCs between captures.
 		t.Fatal(count - zero)
 	}
