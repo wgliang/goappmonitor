@@ -17,14 +17,14 @@ func CollectDebugGCStats(r metrics.Collectry, d time.Duration) {
 	go captureDebugGCStats(r, d)
 }
 
-// capture debug stats
+// Capture debug status.
 func captureDebugGCStats(r metrics.Collectry, d time.Duration) {
 	for _ = range time.Tick(d) {
 		captureDebugGCStatsOnce(r)
 	}
 }
 
-// Debug stats
+// Capture debug status unit.
 func captureDebugGCStatsOnce(r metrics.Collectry) {
 	lastGC := gcStats.LastGC
 	t := time.Now()
@@ -40,7 +40,7 @@ func captureDebugGCStatsOnce(r metrics.Collectry) {
 	debugMetrics.GCStats.PauseTotal.Update(int64(gcStats.PauseTotal))
 }
 
-// Collect debug stats
+// Collect debug status.
 func collectDebugGCStats(r metrics.Collectry) {
 	debugMetrics.GCStats.LastGC = metrics.NewGauge()
 	debugMetrics.GCStats.NumGC = metrics.NewGauge()

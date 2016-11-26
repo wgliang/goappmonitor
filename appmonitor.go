@@ -6,27 +6,29 @@ import (
 	"github.com/wgliang/metrics"
 )
 
-// 所有的应用监控指标集合
+// All can collect Type-of-Monitoring-Data. No matter what you add into
+// goappmonitor,all data will one of the types. So you should choose which type
+// is your best choice.
 var (
-	// float64类型的测量器
+	// float64-gauge
 	appGaugeFloat64 = metrics.NewCollectry()
-	// 计数器
+	// counter
 	appCounter = metrics.NewCollectry()
-	// 仪表测量器
+	// meter
 	appMeter = metrics.NewCollectry()
-	// 柱状图
+	// histogram
 	appHistogram = metrics.NewCollectry()
-	// 调试状态信息
+	// debug status data
 	appDebug = metrics.NewCollectry()
-	// 运行状态信息
+	// runtime statusc data
 	appRuntime = metrics.NewCollectry()
-	//
+	// self
 	appSelf = metrics.NewCollectry()
-	// 只读的采集信息
+	// all collect data
 	values = make(map[string]metrics.Collectry)
 )
 
-// 初始化所有的采集器
+// Initialize all your type.
 func init() {
 	values["gauge"] = appGaugeFloat64
 	values["counter"] = appCounter
@@ -37,7 +39,7 @@ func init() {
 	values["self"] = appSelf
 }
 
-// 指定类型元数据
+// Return raw data of a metric.
 func rawMetric(types []string) map[string]interface{} {
 	data := make(map[string]interface{})
 	for _, mtype := range types {
@@ -48,7 +50,7 @@ func rawMetric(types []string) map[string]interface{} {
 	return data
 }
 
-// 所有类型元数据
+// Return all-type metrics raw data.
 func rawMetrics() map[string]interface{} {
 	data := make(map[string]interface{})
 	for key, v := range values {
@@ -57,7 +59,7 @@ func rawMetrics() map[string]interface{} {
 	return data
 }
 
-// 数据量大小，单个类型数据量和all数据量总和
+// Retuen all-type metrics data size.
 func rawSizes() map[string]int64 {
 	data := map[string]int64{}
 	all := int64(0)
@@ -70,21 +72,21 @@ func rawSizes() map[string]int64 {
 	return data
 }
 
-// 采集应用基础监控数据
+// Collect all base or system data. And it contains debug and runtime status.
 func collectBase(bases []string) {
-	// 30秒后开始采集数据
+	// collect data after 30s
 	time.Sleep(time.Duration(30) * time.Second)
-	// 包含debug信息
+	// if open debug
 	if contains(bases, "debug") {
 		CollectDebugGCStats(appDebug, 5e9)
 	}
-	// 包含运行时信息
+	// if open runtime
 	if contains(bases, "runtime") {
 		CollectRuntimeMemStats(appRuntime, 5e9)
 	}
 }
 
-// 基础数据类型检查
+// Check base status.
 func contains(bases []string, name string) bool {
 	for _, n := range bases {
 		if n == name {

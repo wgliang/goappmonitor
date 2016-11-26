@@ -9,7 +9,7 @@ import (
 	"sync"
 )
 
-// 全局配置文件
+// Global config of goappmonitor, and you can config it in cfg.json.
 type GlobalConfig struct {
 	Debug    bool        `json:"debug"`
 	Hostname string      `json:"hostname"`
@@ -20,27 +20,28 @@ type GlobalConfig struct {
 	Http     *HttpConfig `json:"http"`
 }
 
-// http配置
+// Http config about whether open local server and server address.
 type HttpConfig struct {
 	Enabled bool   `json:"enabled"`
 	Listen  string `json:"listen"`
 }
 
-// 推送数据配置
+// Push config of pushing address and switcher.
 type PushConfig struct {
 	Enabled bool   `json:"enabled"`
 	Api     string `json:"api"`
 }
 
 var (
-	// 默认配置
-	configFn     = "./cfg.json"
-	defaultTags  = ""
-	defaultStep  = int64(60)
+	// default config
+	configFn     = "./cfg.json" // 配置文件路径
+	defaultTags  = ""           // 标签
+	defaultStep  = int64(60)    // 默认采集频率60s一次
 	defaultBases = []string{}
 	defaultPush  = &PushConfig{Enabled: true, Api: "http://127.0.0.1:1988/v1/push"}
 	defaultHttp  = &HttpConfig{Enabled: false, Listen: ""}
-	// 全局变量
+
+	// global variables
 	cfg      *GlobalConfig
 	cfgLock  = new(sync.RWMutex)
 	step     int64
@@ -50,35 +51,35 @@ var (
 	gtags    string
 )
 
-// 获取配置信息
+// Get config.
 func config() *GlobalConfig {
 	cfgLock.RLock()
 	defer cfgLock.RUnlock()
 	return cfg
 }
 
-// 加载配置文件
+// Load config form cfg.json.
 func loadConfig() error {
 	if !isFileExist(configFn) {
 		return fmt.Errorf("config file not found: %s", configFn)
 	}
-	// 解析配置
+	// parse config json file.
 	c, err := parseConfig(configFn)
 	if err != nil {
 		return err
 	}
-	// 更新配置
+	// update config
 	updateConfig(c)
 	return nil
 }
 
-// 默认配置
+// Set default config.
 func setDefaultConfig() {
 	dcfg := defaultConfig()
 	updateConfig(dcfg)
 }
 
-// 默认配置
+// Get default config.
 func defaultConfig() GlobalConfig {
 	return GlobalConfig{
 		Debug:    false,
@@ -91,7 +92,7 @@ func defaultConfig() GlobalConfig {
 	}
 }
 
-// 更新配置
+// Uodate config.
 func updateConfig(c GlobalConfig) {
 	nc := formatConfig(c)
 	cfgLock.Lock()
@@ -99,7 +100,7 @@ func updateConfig(c GlobalConfig) {
 	cfg = &nc
 }
 
-// 格式化配置
+// Format config.
 func formatConfig(c GlobalConfig) GlobalConfig {
 	nc := c
 	if nc.Hostname == "" {
@@ -132,7 +133,7 @@ func formatConfig(c GlobalConfig) GlobalConfig {
 	return nc
 }
 
-// 解析配置文件
+// Parse config.
 func parseConfig(cfg string) (GlobalConfig, error) {
 	var c GlobalConfig
 
@@ -152,19 +153,19 @@ func parseConfig(cfg string) (GlobalConfig, error) {
 	return c, nil
 }
 
-// 默认主机名称
+// Default host name.
 func defaultHostname() string {
 	hostname, _ := os.Hostname()
 	return hostname
 }
 
-// 文件存在性检测
+// Whether file is exist.
 func isFileExist(fn string) bool {
 	_, err := os.Stat(fn)
 	return err == nil || os.IsExist(err)
 }
 
-// 读取配置文件
+// Read config file.
 func readFileString(fn string) (string, error) {
 	b, err := ioutil.ReadFile(fn)
 	if err != nil {

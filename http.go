@@ -9,10 +9,11 @@ import (
 	"strings"
 )
 
+// Start Http serever.
 func startHttp(addr string, debug bool) {
 	configCommonRoutes()
 	configProcRoutes()
-	if len(addr) >= 9 { //x.x.x.x:x
+	if len(addr) >= 9 {
 		s := &http.Server{
 			Addr:           addr,
 			MaxHeaderBytes: 1 << 30,
@@ -29,7 +30,7 @@ func startHttp(addr string, debug bool) {
 	}
 }
 
-// Routers config
+// Routers config.
 func configProcRoutes() {
 	http.HandleFunc("/pfc/proc/metrics/json", func(w http.ResponseWriter, r *http.Request) {
 		if !isLocalReq(r.RemoteAddr) {
@@ -88,7 +89,7 @@ func configProcRoutes() {
 
 }
 
-// Common router config
+// Common router config.
 func configCommonRoutes() {
 	http.HandleFunc("/pfc/health", func(w http.ResponseWriter, r *http.Request) {
 		if !isLocalReq(r.RemoteAddr) {

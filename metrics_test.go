@@ -18,7 +18,7 @@ func TestGauge(t *testing.T) {
 func TestMeter(t *testing.T) {
 	Meter("testmeter", 101)
 	if v := GetMeterCount("testmeter"); v != 101 {
-		t.Errorf("expect value:101 but response:%f", v)
+		t.Errorf("expect value:101 but response:%d", v)
 	}
 
 	if v := GetMeterRateStep("testmeter"); v-0 < 0.00001 && v-0 > -0.00001 {
