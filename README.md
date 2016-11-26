@@ -2,6 +2,7 @@
 
 # goappmonitor
 [![Build Status](https://travis-ci.org/wgliang/goappmonitor.svg?branch=master)](https://travis-ci.org/wgliang/goappmonitor)
+[![codecov](https://codecov.io/gh/wgliang/goappmonitor/branch/master/graph/badge.svg)](https://codecov.io/gh/wgliang/goappmonitor)
 [![GoDoc](https://godoc.org/github.com/wgliang/goappmonitor?status.svg)](https://godoc.org/github.com/wgliang/goappmonitor)
 [![Join the chat at https://gitter.im/goappmonitor/Lobby](https://badges.gitter.im/goappmonitor/Lobby.svg)](https://gitter.im/goappmonitor/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Code Health](https://landscape.io/github/wgliang/goappmonitor/master/landscape.svg?style=flat)](https://landscape.io/github/wgliang/goappmonitor/master)
