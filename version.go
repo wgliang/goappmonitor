@@ -1,4 +1,4 @@
-package appmonitor
+package goappmonitor
 
 const (
 	VERSION = "0.0.1"

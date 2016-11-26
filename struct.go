@@ -1,4 +1,4 @@
-package appmonitor
+package goappmonitor
 
 import (
 	"github.com/wgliang/metrics"

@@ -4,7 +4,7 @@ import (
 	"math/rand"
 	"time"
 
-	appm "github.com/wgliang/appmonitor"
+	appm "github.com/wgliang/goappmonitor"
 )
 
 func main() {

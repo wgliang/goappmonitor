@@ -1,4 +1,4 @@
-package appmonitor
+package goappmonitor
 
 import (
 	"fmt"
