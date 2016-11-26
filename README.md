@@ -34,7 +34,7 @@ v0.0.1 - [Open-Falcon](https://github.com/XiaoMi/open-falcon) (Open source monit
 
 ## Demo
 
-(./doc/demo.png)
+![demo](./doc/demo.png)
 
 ## Usage
 
