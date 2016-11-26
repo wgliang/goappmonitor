@@ -1,15 +1,15 @@
 {
     "debug": false,
-    "hostname": "",
-    "tags": "",
+    "hostname": "appmonitor",
+    "tags": "cop=appmonitor,owt=inf,pdl=falcon,module=appmonitor",
     "step": 60,
-    "bases": ["runtime"],
+    "bases":["runtime","debug"],
     "push": {
         "enabled": true,
-        "api": "http://127.0.0.1:6060/api/push"
+        "api": "http://127.0.0.1:1988/v1/push"
     },
     "http": {
-        "enabled": false,
+        "enabled": true,
         "listen": "0.0.0.0:2015"
     }
 }

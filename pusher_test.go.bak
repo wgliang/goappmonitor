@@ -1,0 +1,11 @@
+package appmonitor
+
+import (
+	"testing"
+	// "time"
+	// "github.com/wgliang/metrics"
+)
+
+func TestPusher(t *testing.T) {
+	push2Falcon()
+}

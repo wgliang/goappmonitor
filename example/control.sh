@@ -2,7 +2,7 @@
 workspace=$(cd $(dirname $0) && pwd)
 cd $workspace
 
-module=appmonitor
+module=goappmonitor
 app=$module
 conf=cfg.json
 pidfile=var/app.pid
@@ -29,7 +29,7 @@ function build() {
 function pack() {
     build
     version=`./$app -v`
-    tar zcvf $app-$version.tar.gz control $app cfg.example.json $gitversion ./scripts/debug
+    tar zcvf $app-$version.tar.gz control $app cfg.json $gitversion ./scripts/debug
 }
 
 function packbin() {
