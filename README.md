@@ -27,6 +27,13 @@ version support collector:
 
 v0.0.1 - [Open-Falcon](https://github.com/XiaoMi/open-falcon) (Open source monitoring system of Xiaomi)
 
+todo....
+
+-- support more type metrics,such as ewma and flow type.
+-- remove third-part library.
+-- support more agent frameworks,such as elasticsearch...
+
+
 ## Install
 
     go get github.com/wgliang/goappmonitor
