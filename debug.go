@@ -12,6 +12,7 @@ var (
 	gcStats      = debug.GCStats{Pause: make([]time.Duration, 11)}
 )
 
+// Collect denug gc stats and it will run a goroutine.
 func CollectDebugGCStats(r metrics.Collectry, d time.Duration) {
 	collectDebugGCStats(r)
 	go captureDebugGCStats(r, d)

@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	GAUGE = "GAUGE"
+	GAUGE = "GAUGE" // Gauge const
 )
 
 // init
@@ -228,7 +228,7 @@ func alignPushStartTs(stepSec int64) {
 	}
 }
 
-// Data struct.
+// Data MetricValue struct.
 type MetricValue struct {
 	Endpoint  string      `json:"endpoint"`
 	Metric    string      `json:"metric"`
@@ -240,15 +240,15 @@ type MetricValue struct {
 }
 
 // Transfer to string.
-func (this *MetricValue) String() string {
+func (mv *MetricValue) String() string {
 	return fmt.Sprintf(
 		"<Endpoint:%s, Metric:%s, Tags:%s, Type:%s, Step:%d, Timestamp:%d, Value:%v>",
-		this.Endpoint,
-		this.Metric,
-		this.Tags,
-		this.Type,
-		this.Step,
-		this.Timestamp,
-		this.Value,
+		mv.Endpoint,
+		mv.Metric,
+		mv.Tags,
+		mv.Type,
+		mv.Step,
+		mv.Timestamp,
+		mv.Value,
 	)
 }

@@ -17,7 +17,7 @@ var (
 	numCgoCalls    int64
 )
 
-// Collect runtime memeory-data.
+// Collect runtime memeory-data:CollectRuntimeMemStats.
 func CollectRuntimeMemStats(r metrics.Collectry, d time.Duration) {
 	collectRuntimeMemStats(r)
 	go captureRuntimeMemStats(r, d)

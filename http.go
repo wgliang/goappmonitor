@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	_ "net/http/pprof"
+	_ "net/http/pprof" // pprof collector
 	"strings"
 )
 
@@ -132,11 +132,12 @@ func isLocalReq(raddr string) bool {
 	return false
 }
 
-// Renders
+// Render json
 func RenderJson(w http.ResponseWriter, data interface{}) {
 	renderJson(w, Response{Msg: "success", Data: data})
 }
 
+// Render string
 func RenderString(w http.ResponseWriter, msg string) {
 	renderJson(w, map[string]string{"msg": msg})
 }
@@ -151,7 +152,7 @@ func renderJson(w http.ResponseWriter, v interface{}) {
 	w.Write(bs)
 }
 
-// common http return
+// common http Response
 type Response struct {
 	Msg  string      `json:"msg"`
 	Data interface{} `json:"data"`
