@@ -60,16 +60,16 @@ Gauge("queueSize", int64(100))
 ```
 
 ##### SetGauge
-+ Interface: SetGauge(name string, value int64)
++ Interface: SetGauge(name string, value float64)
 + Parameter: name - gauge name; value - initial value
 + example:
 
 ```go
-SetGauge("queueSize", int64(18))
+SetGauge("queueSize", float64(18))
 ```
 
 ##### GetGauge
-+ Interface: GetGauge(name string) int64
++ Interface: GetGauge(name string) float64
 + Parameter: name - gauge name
 + example:
 
@@ -91,22 +91,22 @@ A gauge is an instantaneous measurement of a value(float64).
 GaugeFloat64("queueSize", float64(100.00))
 ```
 
-##### SetGaugeFloat64
-+ Interface: SetGaugeFloat64(name string, value float64)
+##### SetGauge
++ Interface: SetGauge(name string, value float64)
 + Parameter: name - gauge name; value - initial value
 + example:
 
 ```go
-SetGaugeFloat64("queueSize", float64(18.0))
+SetGauge("queueSize", float64(18.0))
 ```
 
-##### GetGaugeFloat64
-+ Interface: GetGaugeFloat64(name string) float64
+##### GetGauge
++ Interface: GetGauge(name string) float64
 + Parameter: name - gauge name
 + example:
 
 ```go
-queueSize := GetGaugeFloat64("queueSize")
+queueSize := GetGauge("queueSize")
 ```
 
 Meter
