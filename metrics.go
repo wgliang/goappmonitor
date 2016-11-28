@@ -32,16 +32,16 @@ func init() {
 
 // Gauge Actions
 func Gauge(name string, value int64) {
-	SetGaugeValue(name, float64(value))
+	SetGauge(name, float64(value))
 }
 
 // GaugeFloat64
 func GaugeFloat64(name string, value float64) {
-	SetGaugeValue(name, value)
+	SetGauge(name, value)
 }
 
-// SetGaugeValue
-func SetGaugeValue(name string, value float64) {
+// SetGauge
+func SetGauge(name string, value float64) {
 	rr := appGaugeFloat64.Get(name)
 	if rr != nil {
 		if r, ok := rr.(metrics.GaugeFloat64); ok {
@@ -58,8 +58,8 @@ func SetGaugeValue(name string, value float64) {
 	}
 }
 
-// GetGaugeValue
-func GetGaugeValue(name string) float64 {
+// GetGauge
+func GetGauge(name string) float64 {
 	rr := appGaugeFloat64.Get(name)
 	if rr != nil {
 		if r, ok := rr.(metrics.GaugeFloat64); ok {
@@ -71,11 +71,11 @@ func GetGaugeValue(name string) float64 {
 
 // Meter Actions
 func Meter(name string, count int64) {
-	SetMeterCount(name, count)
+	SetMeter(name, count)
 }
 
-// SetMeterCount
-func SetMeterCount(name string, count int64) {
+// SetMeter
+func SetMeter(name string, count int64) {
 	rr := appMeter.Get(name)
 	if rr != nil {
 		if r, ok := rr.(metrics.Meter); ok {
@@ -92,8 +92,8 @@ func SetMeterCount(name string, count int64) {
 	}
 }
 
-// GetMeterCount
-func GetMeterCount(name string) int64 {
+// GetMeter
+func GetMeter(name string) int64 {
 	rr := appMeter.Get(name)
 	if rr != nil {
 		if r, ok := rr.(metrics.Meter); ok {
@@ -160,11 +160,11 @@ func GetMeterRate15(name string) float64 {
 
 // Histogram Actions
 func Histogram(name string, count int64) {
-	SetHistogramCount(name, count)
+	SetHistogram(name, count)
 }
 
-// SetHistogramCount
-func SetHistogramCount(name string, count int64) {
+// SetHistogram
+func SetHistogram(name string, count int64) {
 	rr := appHistogram.Get(name)
 	if rr != nil {
 		if r, ok := rr.(metrics.Histogram); ok {
@@ -182,8 +182,8 @@ func SetHistogramCount(name string, count int64) {
 	}
 }
 
-// GetHistogramCount
-func GetHistogramCount(name string) int64 {
+// GetHistogram
+func GetHistogram(name string) int64 {
 	rr := appHistogram.Get(name)
 	if rr != nil {
 		if r, ok := rr.(metrics.Histogram); ok {
@@ -305,11 +305,11 @@ func GetHistogram999th(name string) float64 {
 
 // Counter Actions
 func Counter(name string, count int64) {
-	SetCounterCount(name, count)
+	SetCounter(name, count)
 }
 
-// SetCounterCount
-func SetCounterCount(name string, count int64) {
+// SetCounter
+func SetCounter(name string, count int64) {
 	rr := appCounter.Get(name)
 	if rr != nil {
 		if r, ok := rr.(metrics.Counter); ok {
@@ -326,8 +326,8 @@ func SetCounterCount(name string, count int64) {
 	}
 }
 
-// GetCounterCount
-func GetCounterCount(name string) int64 {
+// GetCounter
+func GetCounter(name string) int64 {
 	rr := appCounter.Get(name)
 	if rr != nil {
 		if r, ok := rr.(metrics.Counter); ok {
