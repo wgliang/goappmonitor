@@ -47,7 +47,7 @@ v0.0.1 - [Open-Falcon](https://github.com/XiaoMi/open-falcon) (Open source monit
 
 Below is an example which shows some common use cases for goappmonitor.  Check 
 [example](https://github.com/wgliang/goappmonitor/blob/master/example) for more
-usage.
+usage. Detail [API](./doc/API.md)
 
 ```go
 package main
