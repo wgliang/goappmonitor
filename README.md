@@ -27,11 +27,11 @@ version support collector:
 
 v0.0.1 - [Open-Falcon](https://github.com/XiaoMi/open-falcon) (Open source monitoring system of Xiaomi)
 
-todo....
+### todo....
 
--- support more type metrics,such as ewma and flow type.
--- remove third-part library.
--- support more agent frameworks,such as elasticsearch...
+* support more type metrics,such as ewma and flow type.
+* remove third-part library.
+* support more agent frameworks,such as elasticsearch...
 
 
 ## Install
@@ -59,34 +59,42 @@ import (
 	appm "github.com/wgliang/goappmonitor"
 )
 
-func main() {
-	go basic()  // 基础统计器
-	go senior() // 高级统计器
-	select {}
-}
-
-func basic() {
+// Base or system perfomance data,such as memeory,gc,network and so on.
+func baseOrsystem() {
 	for _ = range time.Tick(time.Second * time.Duration(10)) {
-		// (常用) Meter,用于累加求和、计算变化率。使用场景如，统计首页访问次数、gvm的CG次数等。
+		// (commonly used) Meter, used to sum and calculate the rate of change. Use scenarios
+		// such as the number of home visits statistics, CG etc..
 		pv := int64(rand.Int() % 100)
-		appm.Meter("test.meter", pv)
-		appm.Meter("test.meter.2", pv-50)
+		appm.Meter("appm.meter", pv)
+		appm.Meter("appm.meter.2", pv-50)
 
-		// (常用) Gauge,用于保存数值类型的瞬时记录值。使用场景如，统计队列长度、统计CPU使用率等
+		// (commonly used) Gauge, used to preserve the value of the instantaneous value of the
+		// type of record. Use scenarios such as statistical queue length, statistics CPU usage,
+		// and so on.
 		queueSize := int64(rand.Int()%100 - 50)
-		appm.Gauge("test.gauge", queueSize)
+		appm.Gauge("appm.gauge", queueSize)
 
 		cpuUtil := float64(rand.Int()%10000) / float64(100)
-		appm.GaugeFloat64("test.gauge.float64", cpuUtil)
+		appm.GaugeFloat64("appm.gauge.float64", cpuUtil)
 	}
 }
 
-func senior() {
+// Custom or business perfomance data,such as qps,num of function be called, task queue and so on.
+func customOrbusiness() {
 	for _ = range time.Tick(time.Second) {
-		// Histogram,使用指数衰减抽样的方式，计算被统计对象的概率分布情况。使用场景如，统计主页访问延时的概率分布
+		// Histogram, using the exponential decay sampling method, the probability distribution of
+		// the statistical object is calculated. Using scenarios such as the probability distribution
+		// of the statistics home page to access the delay
 		delay := int64(rand.Int() % 100)
-		appm.Histogram("test.histogram", delay)
+		appm.Histogram("appm.histogram", delay)
 	}
+}
+
+func main() {
+	var ch chan int
+	go baseOrsystem()
+	go customOrbusiness()
+	<-ch
 }
 ```
 
