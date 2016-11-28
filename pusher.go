@@ -6,7 +6,6 @@ import (
 	"log"
 	"time"
 
-	bhttp "github.com/niean/gotools/http/httpclient/beego"
 	"github.com/wgliang/metrics"
 )
 
@@ -205,7 +204,7 @@ func push(data []*MetricValue, url string, debug bool) error {
 			return err
 		}
 
-		response, err := bhttp.Post(url).Body(jr).String()
+		response, err := Post(url).Body(jr).String()
 		if err != nil {
 			return err
 		}
