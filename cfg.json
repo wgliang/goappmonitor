@@ -2,7 +2,7 @@
     "debug": false,
     "hostname": "example",
     "tags": "cop=goappmonitor,owt=inf,pdl=falcon,module=example",
-    "step": 60,
+    "step": 1,
     "bases":["runtime","debug"],
     "push": {
         "enabled": true,
