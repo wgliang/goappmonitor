@@ -1,0 +1,15 @@
+{
+    "debug": false,
+    "hostname": "example",
+    "tags": "cop=goappmonitor,owt=inf,pdl=falcon,module=example",
+    "step": 60,
+    "bases":["runtime","debug"],
+    "push": {
+        "enabled": true,
+        "api": "http://127.0.0.1:1988/v1/push"
+    },
+    "http": {
+        "enabled": true,
+        "listen": "0.0.0.0:2015"
+    }
+}
