@@ -13,7 +13,7 @@
 Golang application performance data monitoring.
 
 
-GoAppMonitor is a library which provides a monitor on your golang applications. It contains system level based monitoring and business level monitoring(custom monitoring).Just add the repository into your apps and registe what you want to monitoring.
+GoAppMonitor is a library which provides a monitor on your golang applications. It contains system level based monitoring and business level monitoring(custom monitoring).Just add the repository into your apps and register what you want to monitoring.
 
 ## Summary
 
