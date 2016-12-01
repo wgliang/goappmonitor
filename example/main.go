@@ -7,7 +7,7 @@ import (
 	appm "github.com/wgliang/goappmonitor"
 )
 
-// Base or system perfomance data,such as memeory,gc,network and so on.
+// Base or system performance data,such as memeory,gc,network and so on.
 func baseOrsystem() {
 	for _ = range time.Tick(time.Second * time.Duration(10)) {
 		// (commonly used) Meter, used to sum and calculate the rate of change. Use scenarios
@@ -27,13 +27,13 @@ func baseOrsystem() {
 	}
 }
 
-// Custom or business perfomance data,such as qps,num of function be called, task queue and so on.
+// Custom or business performance data,such as qps,num of function be called, task queue and so on.
 func customOrbusiness() {
 	for _ = range time.Tick(time.Second) {
 		// Histogram, using the exponential decay sampling method, the probability distribution of
 		// the statistical object is calculated. Using scenarios such as the probability distribution
 		// of the statistics home page to access the delay
-		delay := int64(rand.Int() % 100)
+		delay := int64(rand.Int31n(100))
 		appm.Histogram("appm.histogram", delay)
 	}
 }
