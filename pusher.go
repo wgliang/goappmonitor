@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
+	"github.com/influxdata/influxdb/client/v2"
 	"github.com/wgliang/metrics"
 )
 
@@ -17,15 +19,17 @@ const (
 func init() {
 	cfg = config()
 	step = cfg.Step
-	api = cfg.Push.Api
+	api = cfg.Push.OpenFalcon.Api
 	gdebug = cfg.Debug
 	endpoint = cfg.Hostname
 	gtags = cfg.Tags
+	influxDBAddr = cfg.Push.InfluxDB.Addr
+	influxDBUsername = cfg.Push.InfluxDB.Username
+	influxDBPassword = cfg.Push.InfluxDB.Password
 }
 
 // Push data to open－falcon agent.
 func push2Falcon() {
-
 	// prepare to start work
 	alignPushStartTs(step)
 	// add a timer
@@ -38,13 +42,13 @@ func push2Falcon() {
 		// get local time
 		start := time.Now()
 		// push data
-		err := push(fms, api, gdebug)
+		err := openFalconPusher(fms, api, gdebug)
 		// push time
 		selfGauge("pfc.push.ms", int64(time.Since(start)/time.Millisecond)) // statistics
 
 		if err != nil {
 			if gdebug {
-				log.Printf("[perfcounter] send to %s error: %v", api, err)
+				log.Printf("[goappmonitor] send to %s error: %v", api, err)
 			}
 			// failure case, push data size of 0
 			selfGauge("pfc.push.size", int64(0)) // statistics
@@ -181,7 +185,7 @@ func getTags(name string, tags string) string {
 }
 
 // Push address agent.
-func push(data []*MetricValue, url string, debug bool) error {
+func openFalconPusher(data []*MetricValue, url string, debug bool) error {
 	dlen := len(data)
 	pkg := 200 //send pkg items once
 	sent := 0
@@ -208,7 +212,7 @@ func push(data []*MetricValue, url string, debug bool) error {
 		sent = end
 
 		if debug {
-			log.Printf("[perfcounter] push result: %v, data: %v\n", response, pkgData)
+			log.Printf("[goappmonitor] push result: %v, data: %v\n", response, pkgData)
 		}
 	}
 	return nil
@@ -247,4 +251,235 @@ func (mv *MetricValue) String() string {
 		mv.Timestamp,
 		mv.Value,
 	)
+}
+
+// Push date to InfluxDB.
+func push2InfluxDB() {
+	// prepare to start work
+	alignPushStartTs(step)
+	// add a timer
+	t := time.Now().UTC()
+	_, offset := t.Zone()
+	local := int64(offset)
+	ti := time.Tick(time.Duration(step) * time.Second)
+	for range ti {
+		// collection event count
+		selfMeter("pfc.push.cnt", 1) // statistics
+		// current collection of all data indicators
+		fms := influxDBMetrics()
+		// get local time
+		start := time.Now()
+		// push data
+		err := influxDBPusher(fms, local, gdebug)
+		// push time
+		selfGauge("pfc.push.ms", int64(time.Since(start)/time.Millisecond)) // statistics
+
+		if err != nil {
+			if gdebug {
+				log.Printf("[goappmonitor] send to %s error: %v", api, err)
+			}
+			// failure case, push data size of 0
+			selfGauge("pfc.push.size", int64(0)) // statistics
+		} else {
+			// push data size
+			selfGauge("pfc.push.size", int64(len(fms))) // statistics
+		}
+	}
+}
+
+// influxDBMetrics metrics
+func influxDBMetrics() []Point {
+	data := make([]Point, 0)
+	for _, r := range values {
+		nd := _influxDBMetric(r)
+		data = append(data, nd...)
+	}
+	return data
+}
+
+// influxDBMetric metric.
+func influxDBMetric(types []string) (fd []Point) {
+	for _, ty := range types {
+		if r, ok := values[ty]; ok && r != nil {
+			data := _influxDBMetric(r)
+			fd = append(fd, data...)
+		}
+	}
+	return fd
+}
+
+// _influxDBMetric internal.
+func _influxDBMetric(r metrics.Collectry) []Point {
+	ts := time.Now().Unix()
+	data := make([]Point, 0)
+	r.Each(func(name string, i interface{}) {
+		switch metric := i.(type) {
+		case metrics.Gauge:
+			m := gaugeLineValue(metric, name, endpoint, gtags, step, ts)
+			data = append(data, m...)
+		case metrics.GaugeFloat64:
+			m := gaugeFloat64LineValue(metric, name, endpoint, gtags, step, ts)
+			data = append(data, m...)
+		case metrics.Counter:
+			m := counterLineValue(metric, name, endpoint, gtags, step, ts)
+			data = append(data, m...)
+		case metrics.Meter:
+			// m := metric.Snapshot()
+			ms := meterLineValue(metric, name, endpoint, gtags, step, ts)
+			data = append(data, ms...)
+		case metrics.Histogram:
+			// h := metric.Snapshot()
+			ms := histogramLineValue(metric, name, endpoint, gtags, step, ts)
+			data = append(data, ms...)
+		}
+	})
+
+	return data
+}
+
+// influxDBPusher worker.
+func influxDBPusher(data []Point, offset int64, debug bool) error {
+	clnt, err := client.NewHTTPClient(client.HTTPConfig{
+		Addr:     influxDBAddr,
+		Username: influxDBUsername,
+		Password: influxDBPassword,
+	})
+	if err != nil {
+		log.Fatalln("Error: ", err)
+	}
+
+	bp, err := client.NewBatchPoints(client.BatchPointsConfig{
+		Database:  gtags[strings.Index(gtags, "module=")+7:],
+		Precision: "us",
+	})
+	if err != nil {
+		log.Fatalln("Error: ", err)
+	}
+
+	dlen := len(data)
+	pkg := 200 //send pkg items once
+	sent := 0
+	for {
+		if sent >= dlen {
+			break
+		}
+
+		end := sent + pkg
+		if end > dlen {
+			end = dlen
+		}
+
+		for i := sent; i < end; i++ {
+			tags := map[string]string{
+				"metric":      data[i][0].(string),
+				"counterType": data[i][1].(string),
+				"tags":        data[i][2].(string),
+			}
+			var value float64
+			switch data[i][3].(type) {
+			case int64:
+				value = float64(data[i][3].(int64))
+			case float64:
+				value = data[i][3].(float64)
+			}
+			fields := map[string]interface{}{
+				"value": value,
+				"step":  data[i][4].(int64),
+			}
+
+			point, err := client.NewPoint(
+				endpoint,
+				tags,
+				fields,
+				time.Unix(data[i][5].(int64)+offset, 0),
+			)
+			if err != nil {
+				log.Println("NewPoint() fail")
+			}
+			bp.AddPoint(point)
+		}
+
+		err := clnt.Write(bp)
+		if err != nil {
+			log.Fatal(err)
+			if debug {
+				log.Printf("[goappmonitor] push result: fail, data: %v\n", data[sent:end])
+			}
+		} else {
+			if debug {
+				log.Printf("[goappmonitor] push result: success, data: %v\n", data[sent:end])
+			}
+		}
+
+		sent = end
+	}
+	return nil
+}
+
+// Gauge data-transfer of Line Protocol.
+func gaugeLineValue(metric metrics.Gauge, metricName, endpoint, oldtags string, step, ts int64) []Point {
+	tags := getTags(metricName, oldtags)
+	c := newLineValue(endpoint, "value", metric.Value(), step, GAUGE, tags, ts)
+	return []Point{c}
+}
+
+// Gauge64 data-transfer of Line Protocol.
+func gaugeFloat64LineValue(metric metrics.GaugeFloat64, metricName, endpoint, oldtags string, step, ts int64) []Point {
+	tags := getTags(metricName, oldtags)
+	c := newLineValue(endpoint, "value", metric.Value(), step, GAUGE, tags, ts)
+	return []Point{c}
+}
+
+// Counter data-transfer of Line Protocol.
+func counterLineValue(metric metrics.Counter, metricName, endpoint, oldtags string, step, ts int64) []Point {
+	tags := getTags(metricName, oldtags)
+	c1 := newLineValue(endpoint, "count", metric.Count(), step, GAUGE, tags, ts)
+	return []Point{c1}
+}
+
+// Meter data-transfer of Line Protocol.
+func meterLineValue(metric metrics.Meter, metricName, endpoint, oldtags string, step, ts int64) []Point {
+	data := make([]Point, 0)
+	tags := getTags(metricName, oldtags)
+
+	c1 := newLineValue(endpoint, "rate", metric.RateMean(), step, GAUGE, tags, ts)
+	c2 := newLineValue(endpoint, "sum", metric.Count(), step, GAUGE, tags, ts)
+	data = append(data, c1, c2)
+
+	return data
+}
+
+// Histogram data-transfer of Line Protocol.
+func histogramLineValue(metric metrics.Histogram, metricName, endpoint, oldtags string, step, ts int64) []Point {
+	data := make([]Point, 0)
+	tags := getTags(metricName, oldtags)
+
+	values := make(map[string]interface{})
+	ps := metric.Percentiles([]float64{0.75, 0.95, 0.99})
+	values["min"] = metric.Min()
+	values["max"] = metric.Max()
+	values["mean"] = metric.Mean()
+	values["75th"] = ps[0]
+	values["95th"] = ps[1]
+	values["99th"] = ps[2]
+	for key, val := range values {
+		c := newLineValue(endpoint, key, val, step, GAUGE, tags, ts)
+		data = append(data, c)
+	}
+
+	return data
+}
+
+type Point []interface{}
+
+// New a metric data of Line Protocol Point.
+func newLineValue(endpoint, metric string, value interface{}, step int64, t, tags string, ts int64) Point {
+	return Point{
+		metric,
+		t,
+		tags,
+		value,
+		step,
+		ts,
+	}
 }

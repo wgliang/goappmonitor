@@ -1,0 +1,23 @@
+[
+    {
+        "name": "example3",
+        "columns": [
+            "metric",
+            "value",
+            "step",
+            "counterType",
+            "tags",
+            "timestamp"
+        ],
+        "points": [
+            [
+                "value",
+                56.22,
+                60,
+                "GAUGE",
+                "cop=goappmonitor,owt=inf,pdl=falcon,module=example3,name=appm.gauge.float64",
+                1480563902
+            ]
+        ]
+    }
+]

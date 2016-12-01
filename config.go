@@ -34,21 +34,25 @@ var (
 	values = make(map[string]metrics.Collectry)
 
 	// default config
-	configFn     = "./cfg.json" // 配置文件路径
-	defaultTags  = ""           // 标签
-	defaultStep  = int64(60)    // 默认采集频率60s一次
-	defaultBases = []string{}
-	defaultPush  = &PushConfig{Enabled: true, Api: "http://127.0.0.1:1988/v1/push"}
-	defaultHttp  = &HttpConfig{Enabled: false, Listen: ""}
+	configFn              = "./cfg.json" // 配置文件路径
+	defaultTags           = ""           // 标签
+	defaultStep           = int64(60)    // 默认采集频率60s一次
+	defaultBases          = []string{}
+	defaultPushOpenFalcon = OpenFalconx{Enabled: true, Api: "http://127.0.0.1:1988/v1/push"}
+	defaultPushInfluxDB   = InfluxDBx{Enabled: true, Addr: "http://127.0.0.1:8086", Username: "root", Password: "root"}
+	defaultHttp           = &HttpConfig{Enabled: false, Listen: ""}
 
 	// global variables
-	cfg      *GlobalConfig
-	cfgLock  = new(sync.RWMutex)
-	step     int64
-	api      string
-	gdebug   bool
-	endpoint string
-	gtags    string
+	cfg              *GlobalConfig
+	cfgLock          = new(sync.RWMutex)
+	step             int64
+	api              string
+	gdebug           bool
+	endpoint         string
+	gtags            string
+	influxDBAddr     string
+	influxDBUsername string
+	influxDBPassword string
 )
 
 // GlobalConfig of goappmonitor, and you can config it in cfg.json.
@@ -68,10 +72,22 @@ type HttpConfig struct {
 	Listen  string `json:"listen"`
 }
 
-// Push config of pushing address and switcher.
-type PushConfig struct {
+type OpenFalconx struct {
 	Enabled bool   `json:"enabled"`
 	Api     string `json:"api"`
+}
+
+type InfluxDBx struct {
+	Enabled  bool   `json:"enabled"`
+	Addr     string `json:"addr"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+// Push config of pushing address and switcher.
+type PushConfig struct {
+	OpenFalcon OpenFalconx `json:"open-falcon"`
+	InfluxDB   InfluxDBx   `json:"influxDB"`
 }
 
 // Initialize all your type.
@@ -121,7 +137,7 @@ func defaultConfig() GlobalConfig {
 		Tags:     defaultTags,
 		Step:     defaultStep,
 		Bases:    defaultBases,
-		Push:     defaultPush,
+		Push:     &PushConfig{defaultPushOpenFalcon, defaultPushInfluxDB},
 		Http:     defaultHttp,
 	}
 }
@@ -157,9 +173,14 @@ func formatConfig(c GlobalConfig) GlobalConfig {
 			nc.Tags = defaultTags
 		}
 	}
-	if nc.Push.Enabled && nc.Push.Api == "" {
-		nc.Push = defaultPush
+	if nc.Push.OpenFalcon.Enabled && nc.Push.OpenFalcon.Api == "" {
+		nc.Push.OpenFalcon = defaultPushOpenFalcon
 	}
+
+	if nc.Push.InfluxDB.Enabled && nc.Push.InfluxDB.Addr == "" {
+		nc.Push.InfluxDB = defaultPushInfluxDB
+	}
+
 	if len(nc.Bases) < 1 {
 		nc.Bases = defaultBases
 	}

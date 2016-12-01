@@ -20,11 +20,11 @@ func startHttp(addr string, debug bool) {
 		}
 		go func() {
 			if debug {
-				log.Println("[perfcounter] http server start, listening on", addr)
+				log.Println("[goappmonitor] http server start, listening on", addr)
 			}
 			s.ListenAndServe()
 			if debug {
-				log.Println("[perfcounter] http server stop,", addr)
+				log.Println("[goappmonitor] http server stop,", addr)
 			}
 		}()
 	}
@@ -45,6 +45,13 @@ func configProcRoutes() {
 			return
 		}
 		RenderJson(w, falconMetrics())
+	})
+	http.HandleFunc("/pfc/proc/metrics/influxdb", func(w http.ResponseWriter, r *http.Request) {
+		if !isLocalReq(r.RemoteAddr) {
+			RenderJson(w, "no privilege")
+			return
+		}
+		InfluxDBJson(w, influxDBMetrics())
 	})
 	// url=/pfc/proc/metric/{json,falcon}
 	http.HandleFunc("/pfc/proc/metrics/", func(w http.ResponseWriter, r *http.Request) {
@@ -77,6 +84,12 @@ func configProcRoutes() {
 			RenderJson(w, falconMetric(types))
 			return
 		}
+
+		if args[1] == "influxdb" {
+			InfluxDBJson(w, influxDBMetric(types))
+			return
+		}
+
 	})
 
 	http.HandleFunc("/pfc/proc/metrics/size", func(w http.ResponseWriter, r *http.Request) {
@@ -153,4 +166,43 @@ func renderJson(w http.ResponseWriter, v interface{}) {
 type Response struct {
 	Msg  string      `json:"msg"`
 	Data interface{} `json:"data"`
+}
+
+// Render json
+func InfluxDBJson(w http.ResponseWriter, data interface{}) {
+	influxDBJson(w, InfluxDBResponse{
+		"success",
+		endpoint,
+		[]string{
+			"metric",
+			"counterType",
+			"tags",
+			"value",
+			"step",
+			"timestamp",
+		},
+		data,
+	})
+}
+
+// Render string
+func InfluxDBString(w http.ResponseWriter, msg string) {
+	influxDBJson(w, map[string]string{"msg": msg})
+}
+
+func influxDBJson(w http.ResponseWriter, v interface{}) {
+	bs, err := json.Marshal(v)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.Write(bs)
+}
+
+type InfluxDBResponse struct {
+	Msg     string      `json:"msg"`
+	Name    string      `json:"name"`
+	Columns []string    `json:"columns"`
+	Points  interface{} `json:"points"`
 }

@@ -25,8 +25,12 @@ func init() {
 	}
 
 	// push cron
-	if cfg.Push.Enabled {
+	if cfg.Push.OpenFalcon.Enabled {
 		go push2Falcon()
+	}
+	// push cron
+	if cfg.Push.InfluxDB.Enabled {
+		go push2InfluxDB()
 	}
 }
 
