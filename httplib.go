@@ -261,7 +261,7 @@ func (b *BeegoHttpRequest) Body(data interface{}) *BeegoHttpRequest {
 func (b *BeegoHttpRequest) buildUrl(paramBody string) {
 	// build GET url with query string
 	if b.req.Method == "GET" && len(paramBody) > 0 {
-		if strings.Index(b.url, "?") != -1 {
+		if strings.Contains(b.url, "?") {
 			b.url += "&" + paramBody
 		} else {
 			b.url = b.url + "?" + paramBody

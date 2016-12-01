@@ -29,8 +29,7 @@ v0.0.1 - [Open-Falcon](https://github.com/XiaoMi/open-falcon) (Open source monit
 
 ### todo....
 
-* support more type metrics,such as ewma and flow type.
-* remove third-part library.
+* support influxdb data-formate.
 * support more agent frameworks,such as elasticsearch...
 
 

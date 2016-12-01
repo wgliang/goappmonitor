@@ -30,30 +30,27 @@ func push2Falcon() {
 	alignPushStartTs(step)
 	// add a timer
 	ti := time.Tick(time.Duration(step) * time.Second)
-	for {
-		select {
-		case <-ti:
-			// collection event count
-			selfMeter("pfc.push.cnt", 1) // statistics
-			// current collection of all data indicators
-			fms := falconMetrics()
-			// get local time
-			start := time.Now()
-			// push data
-			err := push(fms, api, gdebug)
-			// push time
-			selfGauge("pfc.push.ms", int64(time.Since(start)/time.Millisecond)) // statistics
+	for range ti {
+		// collection event count
+		selfMeter("pfc.push.cnt", 1) // statistics
+		// current collection of all data indicators
+		fms := falconMetrics()
+		// get local time
+		start := time.Now()
+		// push data
+		err := push(fms, api, gdebug)
+		// push time
+		selfGauge("pfc.push.ms", int64(time.Since(start)/time.Millisecond)) // statistics
 
-			if err != nil {
-				if gdebug {
-					log.Printf("[perfcounter] send to %s error: %v", api, err)
-				}
-				// failure case, push data size of 0
-				selfGauge("pfc.push.size", int64(0)) // statistics
-			} else {
-				// push data size
-				selfGauge("pfc.push.size", int64(len(fms))) // statistics
+		if err != nil {
+			if gdebug {
+				log.Printf("[perfcounter] send to %s error: %v", api, err)
 			}
+			// failure case, push data size of 0
+			selfGauge("pfc.push.size", int64(0)) // statistics
+		} else {
+			// push data size
+			selfGauge("pfc.push.size", int64(len(fms))) // statistics
 		}
 	}
 }

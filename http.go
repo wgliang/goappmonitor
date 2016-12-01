@@ -126,10 +126,7 @@ func configCommonRoutes() {
 }
 
 func isLocalReq(raddr string) bool {
-	if strings.HasPrefix(raddr, "127.0.0.1") {
-		return true
-	}
-	return false
+	return strings.HasPrefix(raddr, "127.0.0.1")
 }
 
 // Render json

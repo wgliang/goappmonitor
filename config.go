@@ -51,7 +51,7 @@ var (
 	gtags    string
 )
 
-// Global config of goappmonitor, and you can config it in cfg.json.
+// GlobalConfig of goappmonitor, and you can config it in cfg.json.
 type GlobalConfig struct {
 	Debug    bool        `json:"debug"`
 	Hostname string      `json:"hostname"`
@@ -62,7 +62,7 @@ type GlobalConfig struct {
 	Http     *HttpConfig `json:"http"`
 }
 
-// Http config about whether open local server and server address.
+// HttpConfig about whether open local server and server address.
 type HttpConfig struct {
 	Enabled bool   `json:"enabled"`
 	Listen  string `json:"listen"`

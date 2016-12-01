@@ -20,7 +20,7 @@ func CollectDebugGCStats(r metrics.Collectry, d time.Duration) {
 
 // Capture debug status.
 func captureDebugGCStats(r metrics.Collectry, d time.Duration) {
-	for _ = range time.Tick(d) {
+	for range time.Tick(d) {
 		captureDebugGCStatsWorker(r)
 	}
 }
