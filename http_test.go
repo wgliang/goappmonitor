@@ -12,6 +12,7 @@ var Urls []string
 func TestRenderJson(t *testing.T) {
 	Urls = []string{"/pfc/proc/metrics/json",
 		"/pfc/proc/metrics/falcon",
+		"/pfc/proc/metrics/influxdb",
 		"/pfc/proc/metrics/",
 		"/pfc/proc/metrics/size",
 		"/pfc/health",
