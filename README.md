@@ -27,10 +27,12 @@ version support agent:
 
 v0.0.1 - [Open-Falcon](https://github.com/XiaoMi/open-falcon) (Open source monitoring system of Xiaomi)
 
+v0.0.2 - [Open-Falcon](https://github.com/XiaoMi/open-falcon);[InfluxDB](https://github.com/influxdata/influxdb)
+
 ### todo....
 
-* support influxdb data-formate.
 * support more agent frameworks,such as elasticsearch...
+* go processes manager and debug online...
 
 
 ## Install
