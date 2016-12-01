@@ -12,17 +12,17 @@ func baseOrsystem() {
 	for _ = range time.Tick(time.Second * time.Duration(10)) {
 		// (commonly used) Meter, used to sum and calculate the rate of change. Use scenarios
 		// such as the number of home visits statistics, CG etc..
-		pv := int64(rand.Int() % 100)
+		pv := int64(rand.Int31n(100))
 		appm.Meter("appm.meter", pv)
 		appm.Meter("appm.meter.2", pv-50)
 
 		// (commonly used) Gauge, used to preserve the value of the instantaneous value of the
 		// type of record. Use scenarios such as statistical queue length, statistics CPU usage,
 		// and so on.
-		queueSize := int64(rand.Int()%100 - 50)
+		queueSize := int64(rand.Int31n(100) - 50)
 		appm.Gauge("appm.gauge", queueSize)
 
-		cpuUtil := float64(rand.Int()%10000) / float64(100)
+		cpuUtil := float64(rand.Int31n(10000)) / float64(100)
 		appm.GaugeFloat64("appm.gauge.float64", cpuUtil)
 	}
 }
