@@ -23,11 +23,12 @@ In your golang application code, the user calls the statistics function provided
 
 ## Version
 
-version support agent:
+Current version support:
 
-v0.0.1 - [Open-Falcon](https://github.com/XiaoMi/open-falcon) (Open source monitoring system of Xiaomi)
+- v0.0.2
 
-v0.0.2 - [Open-Falcon](https://github.com/XiaoMi/open-falcon);[InfluxDB](https://github.com/influxdata/influxdb)
+	* [Open-Falcon](https://github.com/XiaoMi/open-falcon) (Open source monitoring system of Xiaomi)
+	* [InfluxDB](https://github.com/influxdata/influxdb) (Scalable datastore for metrics, events, and real-time analytics)
 
 ### todo....
 
