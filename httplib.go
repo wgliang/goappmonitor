@@ -12,27 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Usage:
-//
-// import "github.com/astaxie/beego/httplib"
-//
-//  b := httplib.Post("http://beego.me/")
-//  b.Param("username","astaxie")
-//  b.Param("password","123456")
-//  b.PostFile("uploadfile1", "httplib.pdf")
-//  b.PostFile("uploadfile2", "httplib.txt")
-//  str, err := b.String()
-//  if err != nil {
-//      t.Fatal(err)
-//  }
-//  fmt.Println(str)
-//
-//  more docs http://beego.me/docs/module/httplib.md
-
-// jr, err := json.Marshal(request)
-// response := &cmodel.QueryResponseDto{}
-// err = thttp.Post(qurl).Body(jr).ToJson(response)
-
 package goappmonitor
 
 import (
