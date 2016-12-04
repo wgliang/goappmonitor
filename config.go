@@ -84,7 +84,7 @@ type InfluxDBx struct {
 	Password string `json:"password"`
 }
 
-// Push config of pushing address and switcher.
+// PushConfig of pushing address and switcher.
 type PushConfig struct {
 	OpenFalcon OpenFalconx `json:"open-falcon"`
 	InfluxDB   InfluxDBx   `json:"influxDB"`

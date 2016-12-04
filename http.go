@@ -142,12 +142,12 @@ func isLocalReq(raddr string) bool {
 	return strings.HasPrefix(raddr, "127.0.0.1")
 }
 
-// Render json
+// RenderJson json
 func RenderJson(w http.ResponseWriter, data interface{}) {
 	renderJson(w, Response{Msg: "success", Data: data})
 }
 
-// Render string
+// RenderString string
 func RenderString(w http.ResponseWriter, msg string) {
 	renderJson(w, map[string]string{"msg": msg})
 }
@@ -162,7 +162,7 @@ func renderJson(w http.ResponseWriter, v interface{}) {
 	w.Write(bs)
 }
 
-// common http Response
+// Response http struct
 type Response struct {
 	Msg  string      `json:"msg"`
 	Data interface{} `json:"data"`

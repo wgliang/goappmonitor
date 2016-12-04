@@ -45,7 +45,7 @@ func createDefaultCookie() {
 	defaultCookieJar, _ = cookiejar.New(nil)
 }
 
-// Overwrite default settings
+// SetDefaultSetting Overwrite default settings
 func SetDefaultSetting(setting BeegoHttpSettings) {
 	settingMutex.Lock()
 	defer settingMutex.Unlock()
@@ -96,7 +96,7 @@ func Head(url string) *BeegoHttpRequest {
 	return newBeegoRequest(url, "HEAD")
 }
 
-// BeegoHttpSettings
+// BeegoHttpSettings struct
 type BeegoHttpSettings struct {
 	ShowDebug        bool
 	UserAgent        string
@@ -119,7 +119,7 @@ type BeegoHttpRequest struct {
 	body    []byte
 }
 
-// Change request settings
+// Setting Change request settings
 func (b *BeegoHttpRequest) Setting(setting BeegoHttpSettings) *BeegoHttpRequest {
 	b.setting = setting
 	return b

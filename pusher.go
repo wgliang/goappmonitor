@@ -12,7 +12,8 @@ import (
 )
 
 const (
-	GAUGE = "GAUGE" // Gauge const
+	// Gauge const
+	GAUGE = "GAUGE"
 )
 
 // init
