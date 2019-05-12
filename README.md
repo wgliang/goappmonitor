@@ -62,7 +62,7 @@ import (
 	appm "github.com/wgliang/goappmonitor"
 )
 
-// Base or system performance data,such as memeory,gc,network and so on.
+// Base or system performance data,such as memory,gc,network and so on.
 func baseOrsystem() {
 	for _ = range time.Tick(time.Second * time.Duration(10)) {
 		// (commonly used) Meter, used to sum and calculate the rate of change. Use scenarios
@@ -105,4 +105,4 @@ func main() {
 
 Repository is base on goperfcounter of [niean](https://github.com/niean/goperfcounter)
 
-Logo is desigend by [xuri](https://github.com/Luxurioust)
+Logo is designed by [xuri](https://github.com/Luxurioust)
