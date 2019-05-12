@@ -1,7 +1,7 @@
 API
 ====
 
-Several types of statistics are provided by goappmonitor, Counter、Gauge、GaugeFloat64、Meter、Histogram、Timer、Health。The meaning of statistics, see Synonyms at[java-metrics](http://metrics.dropwizard.io/3.1.0/getting-started/)。
+Several types of statistics are provided by goappmonitor, Counter、Gauge、GaugeFloat64、Meter、Histogram、Timer、Health。The meaning of statistics, see Synonyms at [java-metrics](http://metrics.dropwizard.io/3.1.0/getting-started/)。
 
 
 Counter
